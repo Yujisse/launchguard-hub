@@ -11,8 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
+import { Route as CriarContaRouteImport } from './routes/criar-conta'
+import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as PrecosRouteImport } from './routes/precos'
+import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as RecuperarSenhaRouteImport } from './routes/recuperar-senha'
 import { Route as RelatorioExemploRouteImport } from './routes/relatorio-exemplo'
+import { Route as TermosRouteImport } from './routes/termos'
+import { Route as UsoAceitavelRouteImport } from './routes/uso-aceitavel'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -24,9 +30,29 @@ const ComoFuncionaRoute = ComoFuncionaRouteImport.update({
   path: '/como-funciona',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CriarContaRoute = CriarContaRouteImport.update({
+  id: '/criar-conta',
+  path: '/criar-conta',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrecosRoute = PrecosRouteImport.update({
   id: '/precos',
   path: '/precos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadeRoute = PrivacidadeRouteImport.update({
+  id: '/privacidade',
+  path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecuperarSenhaRoute = RecuperarSenhaRouteImport.update({
+  id: '/recuperar-senha',
+  path: '/recuperar-senha',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RelatorioExemploRoute = RelatorioExemploRouteImport.update({
@@ -34,39 +60,104 @@ const RelatorioExemploRoute = RelatorioExemploRouteImport.update({
   path: '/relatorio-exemplo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermosRoute = TermosRouteImport.update({
+  id: '/termos',
+  path: '/termos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsoAceitavelRoute = UsoAceitavelRouteImport.update({
+  id: '/uso-aceitavel',
+  path: '/uso-aceitavel',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/como-funciona': typeof ComoFuncionaRoute
+  '/criar-conta': typeof CriarContaRoute
+  '/entrar': typeof EntrarRoute
   '/precos': typeof PrecosRoute
+  '/privacidade': typeof PrivacidadeRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
   '/relatorio-exemplo': typeof RelatorioExemploRoute
+  '/termos': typeof TermosRoute
+  '/uso-aceitavel': typeof UsoAceitavelRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/como-funciona': typeof ComoFuncionaRoute
+  '/criar-conta': typeof CriarContaRoute
+  '/entrar': typeof EntrarRoute
   '/precos': typeof PrecosRoute
+  '/privacidade': typeof PrivacidadeRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
   '/relatorio-exemplo': typeof RelatorioExemploRoute
+  '/termos': typeof TermosRoute
+  '/uso-aceitavel': typeof UsoAceitavelRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/como-funciona': typeof ComoFuncionaRoute
+  '/criar-conta': typeof CriarContaRoute
+  '/entrar': typeof EntrarRoute
   '/precos': typeof PrecosRoute
+  '/privacidade': typeof PrivacidadeRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
   '/relatorio-exemplo': typeof RelatorioExemploRoute
+  '/termos': typeof TermosRoute
+  '/uso-aceitavel': typeof UsoAceitavelRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/como-funciona' | '/precos' | '/relatorio-exemplo'
+  fullPaths:
+    | '/'
+    | '/como-funciona'
+    | '/criar-conta'
+    | '/entrar'
+    | '/precos'
+    | '/privacidade'
+    | '/recuperar-senha'
+    | '/relatorio-exemplo'
+    | '/termos'
+    | '/uso-aceitavel'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/como-funciona' | '/precos' | '/relatorio-exemplo'
-  id: '__root__' | '/' | '/como-funciona' | '/precos' | '/relatorio-exemplo'
+  to:
+    | '/'
+    | '/como-funciona'
+    | '/criar-conta'
+    | '/entrar'
+    | '/precos'
+    | '/privacidade'
+    | '/recuperar-senha'
+    | '/relatorio-exemplo'
+    | '/termos'
+    | '/uso-aceitavel'
+  id:
+    | '__root__'
+    | '/'
+    | '/como-funciona'
+    | '/criar-conta'
+    | '/entrar'
+    | '/precos'
+    | '/privacidade'
+    | '/recuperar-senha'
+    | '/relatorio-exemplo'
+    | '/termos'
+    | '/uso-aceitavel'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ComoFuncionaRoute: typeof ComoFuncionaRoute
+  CriarContaRoute: typeof CriarContaRoute
+  EntrarRoute: typeof EntrarRoute
   PrecosRoute: typeof PrecosRoute
+  PrivacidadeRoute: typeof PrivacidadeRoute
+  RecuperarSenhaRoute: typeof RecuperarSenhaRoute
   RelatorioExemploRoute: typeof RelatorioExemploRoute
+  TermosRoute: typeof TermosRoute
+  UsoAceitavelRoute: typeof UsoAceitavelRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -85,11 +176,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ComoFuncionaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/criar-conta': {
+      id: '/criar-conta'
+      path: '/criar-conta'
+      fullPath: '/criar-conta'
+      preLoaderRoute: typeof CriarContaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/precos': {
       id: '/precos'
       path: '/precos'
       fullPath: '/precos'
       preLoaderRoute: typeof PrecosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidade': {
+      id: '/privacidade'
+      path: '/privacidade'
+      fullPath: '/privacidade'
+      preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recuperar-senha': {
+      id: '/recuperar-senha'
+      path: '/recuperar-senha'
+      fullPath: '/recuperar-senha'
+      preLoaderRoute: typeof RecuperarSenhaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/relatorio-exemplo': {
@@ -99,14 +218,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RelatorioExemploRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/termos': {
+      id: '/termos'
+      path: '/termos'
+      fullPath: '/termos'
+      preLoaderRoute: typeof TermosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/uso-aceitavel': {
+      id: '/uso-aceitavel'
+      path: '/uso-aceitavel'
+      fullPath: '/uso-aceitavel'
+      preLoaderRoute: typeof UsoAceitavelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ComoFuncionaRoute: ComoFuncionaRoute,
+  CriarContaRoute: CriarContaRoute,
+  EntrarRoute: EntrarRoute,
   PrecosRoute: PrecosRoute,
+  PrivacidadeRoute: PrivacidadeRoute,
+  RecuperarSenhaRoute: RecuperarSenhaRoute,
   RelatorioExemploRoute: RelatorioExemploRoute,
+  TermosRoute: TermosRoute,
+  UsoAceitavelRoute: UsoAceitavelRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
