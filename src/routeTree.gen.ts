@@ -10,33 +10,63 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
+import { Route as PrecosRouteImport } from './routes/precos'
+import { Route as RelatorioExemploRouteImport } from './routes/relatorio-exemplo'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ComoFuncionaRoute = ComoFuncionaRouteImport.update({
+  id: '/como-funciona',
+  path: '/como-funciona',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrecosRoute = PrecosRouteImport.update({
+  id: '/precos',
+  path: '/precos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RelatorioExemploRoute = RelatorioExemploRouteImport.update({
+  id: '/relatorio-exemplo',
+  path: '/relatorio-exemplo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/como-funciona': typeof ComoFuncionaRoute
+  '/precos': typeof PrecosRoute
+  '/relatorio-exemplo': typeof RelatorioExemploRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/como-funciona': typeof ComoFuncionaRoute
+  '/precos': typeof PrecosRoute
+  '/relatorio-exemplo': typeof RelatorioExemploRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/como-funciona': typeof ComoFuncionaRoute
+  '/precos': typeof PrecosRoute
+  '/relatorio-exemplo': typeof RelatorioExemploRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/como-funciona' | '/precos' | '/relatorio-exemplo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/como-funciona' | '/precos' | '/relatorio-exemplo'
+  id: '__root__' | '/' | '/como-funciona' | '/precos' | '/relatorio-exemplo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ComoFuncionaRoute: typeof ComoFuncionaRoute
+  PrecosRoute: typeof PrecosRoute
+  RelatorioExemploRoute: typeof RelatorioExemploRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +78,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/como-funciona': {
+      id: '/como-funciona'
+      path: '/como-funciona'
+      fullPath: '/como-funciona'
+      preLoaderRoute: typeof ComoFuncionaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/precos': {
+      id: '/precos'
+      path: '/precos'
+      fullPath: '/precos'
+      preLoaderRoute: typeof PrecosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/relatorio-exemplo': {
+      id: '/relatorio-exemplo'
+      path: '/relatorio-exemplo'
+      fullPath: '/relatorio-exemplo'
+      preLoaderRoute: typeof RelatorioExemploRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ComoFuncionaRoute: ComoFuncionaRoute,
+  PrecosRoute: PrecosRoute,
+  RelatorioExemploRoute: RelatorioExemploRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
