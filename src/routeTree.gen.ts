@@ -10,19 +10,26 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
 import { Route as CriarContaRouteImport } from './routes/criar-conta'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as PrecosRouteImport } from './routes/precos'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as RecuperarSenhaRouteImport } from './routes/recuperar-senha'
+import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
 import { Route as RelatorioExemploRouteImport } from './routes/relatorio-exemplo'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as UsoAceitavelRouteImport } from './routes/uso-aceitavel'
+import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ComoFuncionaRoute = ComoFuncionaRouteImport.update({
@@ -55,6 +62,11 @@ const RecuperarSenhaRoute = RecuperarSenhaRouteImport.update({
   path: '/recuperar-senha',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
+  id: '/redefinir-senha',
+  path: '/redefinir-senha',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RelatorioExemploRoute = RelatorioExemploRouteImport.update({
   id: '/relatorio-exemplo',
   path: '/relatorio-exemplo',
@@ -70,6 +82,11 @@ const UsoAceitavelRoute = UsoAceitavelRouteImport.update({
   path: '/uso-aceitavel',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -79,9 +96,11 @@ export interface FileRoutesByFullPath {
   '/precos': typeof PrecosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/recuperar-senha': typeof RecuperarSenhaRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
   '/relatorio-exemplo': typeof RelatorioExemploRoute
   '/termos': typeof TermosRoute
   '/uso-aceitavel': typeof UsoAceitavelRoute
+  '/app': typeof AuthenticatedAppRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -91,22 +110,27 @@ export interface FileRoutesByTo {
   '/precos': typeof PrecosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/recuperar-senha': typeof RecuperarSenhaRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
   '/relatorio-exemplo': typeof RelatorioExemploRoute
   '/termos': typeof TermosRoute
   '/uso-aceitavel': typeof UsoAceitavelRoute
+  '/app': typeof AuthenticatedAppRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/como-funciona': typeof ComoFuncionaRoute
   '/criar-conta': typeof CriarContaRoute
   '/entrar': typeof EntrarRoute
   '/precos': typeof PrecosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/recuperar-senha': typeof RecuperarSenhaRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
   '/relatorio-exemplo': typeof RelatorioExemploRoute
   '/termos': typeof TermosRoute
   '/uso-aceitavel': typeof UsoAceitavelRoute
+  '/_authenticated/app': typeof AuthenticatedAppRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -118,9 +142,11 @@ export interface FileRouteTypes {
     | '/precos'
     | '/privacidade'
     | '/recuperar-senha'
+    | '/redefinir-senha'
     | '/relatorio-exemplo'
     | '/termos'
     | '/uso-aceitavel'
+    | '/app'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -130,31 +156,38 @@ export interface FileRouteTypes {
     | '/precos'
     | '/privacidade'
     | '/recuperar-senha'
+    | '/redefinir-senha'
     | '/relatorio-exemplo'
     | '/termos'
     | '/uso-aceitavel'
+    | '/app'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/como-funciona'
     | '/criar-conta'
     | '/entrar'
     | '/precos'
     | '/privacidade'
     | '/recuperar-senha'
+    | '/redefinir-senha'
     | '/relatorio-exemplo'
     | '/termos'
     | '/uso-aceitavel'
+    | '/_authenticated/app'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   ComoFuncionaRoute: typeof ComoFuncionaRoute
   CriarContaRoute: typeof CriarContaRoute
   EntrarRoute: typeof EntrarRoute
   PrecosRoute: typeof PrecosRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   RecuperarSenhaRoute: typeof RecuperarSenhaRoute
+  RedefinirSenhaRoute: typeof RedefinirSenhaRoute
   RelatorioExemploRoute: typeof RelatorioExemploRoute
   TermosRoute: typeof TermosRoute
   UsoAceitavelRoute: typeof UsoAceitavelRoute
@@ -167,6 +200,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/como-funciona': {
@@ -211,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RecuperarSenhaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/redefinir-senha': {
+      id: '/redefinir-senha'
+      path: '/redefinir-senha'
+      fullPath: '/redefinir-senha'
+      preLoaderRoute: typeof RedefinirSenhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/relatorio-exemplo': {
       id: '/relatorio-exemplo'
       path: '/relatorio-exemplo'
@@ -232,17 +279,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsoAceitavelRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/app': {
+      id: '/_authenticated/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AuthenticatedAppRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAppRoute: typeof AuthenticatedAppRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAppRoute: AuthenticatedAppRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   ComoFuncionaRoute: ComoFuncionaRoute,
   CriarContaRoute: CriarContaRoute,
   EntrarRoute: EntrarRoute,
   PrecosRoute: PrecosRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   RecuperarSenhaRoute: RecuperarSenhaRoute,
+  RedefinirSenhaRoute: RedefinirSenhaRoute,
   RelatorioExemploRoute: RelatorioExemploRoute,
   TermosRoute: TermosRoute,
   UsoAceitavelRoute: UsoAceitavelRoute,
