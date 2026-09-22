@@ -14,6 +14,84 @@ export type Database = {
   }
   public: {
     Tables: {
+      findings: {
+        Row: {
+          affected_resource: string | null
+          category: string
+          check_code: string
+          confidence: string
+          created_at: string
+          fingerprint: string
+          id: string
+          impact: string | null
+          owner_id: string
+          project_id: string
+          remediation: string | null
+          safe_evidence: string | null
+          scan_id: string
+          severity: string
+          status: string
+          summary: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          affected_resource?: string | null
+          category: string
+          check_code: string
+          confidence?: string
+          created_at?: string
+          fingerprint: string
+          id?: string
+          impact?: string | null
+          owner_id: string
+          project_id: string
+          remediation?: string | null
+          safe_evidence?: string | null
+          scan_id: string
+          severity: string
+          status?: string
+          summary: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          affected_resource?: string | null
+          category?: string
+          check_code?: string
+          confidence?: string
+          created_at?: string
+          fingerprint?: string
+          id?: string
+          impact?: string | null
+          owner_id?: string
+          project_id?: string
+          remediation?: string | null
+          safe_evidence?: string | null
+          scan_id?: string
+          severity?: string
+          status?: string
+          summary?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "findings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "findings_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "scans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -49,6 +127,119 @@ export type Database = {
           user_role?: string | null
         }
         Relationships: []
+      }
+      projects: {
+        Row: {
+          authorization_confirmed: boolean
+          builder: string
+          created_at: string
+          environment: string
+          id: string
+          is_demo: boolean
+          last_scan_at: string | null
+          latest_score: number | null
+          latest_verdict: string | null
+          name: string
+          owner_id: string
+          public_url: string
+          updated_at: string
+        }
+        Insert: {
+          authorization_confirmed?: boolean
+          builder?: string
+          created_at?: string
+          environment?: string
+          id?: string
+          is_demo?: boolean
+          last_scan_at?: string | null
+          latest_score?: number | null
+          latest_verdict?: string | null
+          name: string
+          owner_id: string
+          public_url: string
+          updated_at?: string
+        }
+        Update: {
+          authorization_confirmed?: boolean
+          builder?: string
+          created_at?: string
+          environment?: string
+          id?: string
+          is_demo?: boolean
+          last_scan_at?: string | null
+          latest_score?: number | null
+          latest_verdict?: string | null
+          name?: string
+          owner_id?: string
+          public_url?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      scans: {
+        Row: {
+          checked_url: string | null
+          completed_at: string | null
+          created_at: string
+          current_stage: string | null
+          failure_message: string | null
+          final_url: string | null
+          id: string
+          overall_score: number | null
+          owner_id: string
+          progress: number
+          project_id: string
+          scan_type: string
+          started_at: string | null
+          status: string
+          updated_at: string
+          verdict: string | null
+        }
+        Insert: {
+          checked_url?: string | null
+          completed_at?: string | null
+          created_at?: string
+          current_stage?: string | null
+          failure_message?: string | null
+          final_url?: string | null
+          id?: string
+          overall_score?: number | null
+          owner_id: string
+          progress?: number
+          project_id: string
+          scan_type?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          verdict?: string | null
+        }
+        Update: {
+          checked_url?: string | null
+          completed_at?: string | null
+          created_at?: string
+          current_stage?: string | null
+          failure_message?: string | null
+          final_url?: string | null
+          id?: string
+          overall_score?: number | null
+          owner_id?: string
+          progress?: number
+          project_id?: string
+          scan_type?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          verdict?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scans_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
