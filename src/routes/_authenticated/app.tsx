@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Radar } from "lucide-react";
 
@@ -20,6 +21,10 @@ export const Route = createFileRoute("/_authenticated/app")({
 
 function Page() {
   const { user } = Route.useRouteContext();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (sessionStorage.getItem("lancapp:pending-url")) navigate({ to: "/app/analisar", search: {} });
+  }, [navigate]);
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["profile", user.id],
@@ -58,12 +63,11 @@ function Page() {
           <div>
             <h2 className="text-lg font-semibold">Seu primeiro diagnóstico começa com uma URL.</h2>
             <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-              A criação de projetos e o diagnóstico passivo estão sendo construídos nesta etapa.
-              Ainda não há nenhum resultado para mostrar — e não vamos exibir números inventados.
+              Informe o endereço público do seu SaaS e confirme que você tem autorização para analisá-lo.
             </p>
           </div>
-          <Button disabled size="lg">
-            Adicionar projeto (em breve)
+          <Button asChild size="lg" variant="hero">
+            <Link to="/app/analisar" search={{}}>Analisar uma URL</Link>
           </Button>
         </section>
 

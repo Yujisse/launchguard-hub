@@ -22,6 +22,7 @@ import { Route as RelatorioExemploRouteImport } from './routes/relatorio-exemplo
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as UsoAceitavelRouteImport } from './routes/uso-aceitavel'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
+import { Route as AuthenticatedAppAnalisarRouteImport } from './routes/_authenticated/app_.analisar'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -87,6 +88,12 @@ const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
   path: '/app',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppAnalisarRoute =
+  AuthenticatedAppAnalisarRouteImport.update({
+    id: '/app_/analisar',
+    path: '/app/analisar',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -101,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/termos': typeof TermosRoute
   '/uso-aceitavel': typeof UsoAceitavelRoute
   '/app': typeof AuthenticatedAppRoute
+  '/app/analisar': typeof AuthenticatedAppAnalisarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -115,6 +123,7 @@ export interface FileRoutesByTo {
   '/termos': typeof TermosRoute
   '/uso-aceitavel': typeof UsoAceitavelRoute
   '/app': typeof AuthenticatedAppRoute
+  '/app/analisar': typeof AuthenticatedAppAnalisarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -131,6 +140,7 @@ export interface FileRoutesById {
   '/termos': typeof TermosRoute
   '/uso-aceitavel': typeof UsoAceitavelRoute
   '/_authenticated/app': typeof AuthenticatedAppRoute
+  '/_authenticated/app_/analisar': typeof AuthenticatedAppAnalisarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/uso-aceitavel'
     | '/app'
+    | '/app/analisar'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/uso-aceitavel'
     | '/app'
+    | '/app/analisar'
   id:
     | '__root__'
     | '/'
@@ -176,6 +188,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/uso-aceitavel'
     | '/_authenticated/app'
+    | '/_authenticated/app_/analisar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -286,15 +299,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app_/analisar': {
+      id: '/_authenticated/app_/analisar'
+      path: '/app/analisar'
+      fullPath: '/app/analisar'
+      preLoaderRoute: typeof AuthenticatedAppAnalisarRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppRoute: typeof AuthenticatedAppRoute
+  AuthenticatedAppAnalisarRoute: typeof AuthenticatedAppAnalisarRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppRoute: AuthenticatedAppRoute,
+  AuthenticatedAppAnalisarRoute: AuthenticatedAppAnalisarRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
