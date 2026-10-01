@@ -57,40 +57,6 @@ export function UrlScanForm() {
   };
 
   return (
-        (u.protocol === "http:" || u.protocol === "https:") &&
-        u.hostname.includes(".") &&
-        !/^(localhost|127\.|10\.|192\.168\.|169\.254\.)/i.test(u.hostname)
-      );
-    } catch {
-      return false;
-    }
-  }, "Use um endereço público válido, como https://seu-saas.com");
-
-export function UrlScanForm() {
-  const [value, setValue] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    const parsed = urlSchema.safeParse(value);
-    if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? "Endereço inválido.");
-      return;
-    }
-    setError(null);
-    setLoading(true);
-    // O diagnóstico real roda no servidor após a criação da conta (próxima etapa do build).
-    window.setTimeout(() => {
-      setLoading(false);
-      toast("Crie sua conta para iniciar o diagnóstico", {
-        description: "A verificação passiva roda no servidor e exige confirmação de autorização.",
-      });
-    }, 400);
-  };
-
-  return (
     <form id="analisar" onSubmit={onSubmit} noValidate className="w-full">
       <div className="flex flex-col gap-3 sm:flex-row">
         <div className="flex-1">
