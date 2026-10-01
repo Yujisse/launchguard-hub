@@ -18,6 +18,17 @@ export const createProject = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const invalid = validatePublicUrl(data.publicUrl);
     if (invalid) throw new Error(invalid);
+    const url = normalizeUrlInput(data.publicUrl);
+    const { data: existing } = await context.supabase
+      .from("projects")
+      .select("id")
+      .eq("owner_id", context.userId)
+      .eq("public_url", url)
+      .maybeSingle();
+    if (existing) {
+      await context.supabase.from("projects").update({ authorization_confirmed: true }).eq("id", existing.id);
+      return { id: existing.id };
+    }
     const { data: row, error } = await context.supabase
       .from("projects")
       .insert({

@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { z } from "zod";
-import { toast } from "sonner";
+import { useNavigate } from "@tanstack/react-router";
+
+import { supabase } from "@/integrations/supabase/client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,8 +30,9 @@ export function UrlScanForm() {
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const parsed = urlSchema.safeParse(value);
     if (!parsed.success) {
@@ -38,13 +41,19 @@ export function UrlScanForm() {
     }
     setError(null);
     setLoading(true);
-    // O diagnóstico real roda no servidor após a criação da conta (próxima etapa do build).
-    window.setTimeout(() => {
+    try {
+      sessionStorage.setItem("lancapp:pending-url", parsed.data);
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        await navigate({ to: "/app/analisar", search: { url: parsed.data } });
+      } else {
+        await navigate({ to: "/criar-conta" });
+      }
+    } catch {
+      setError("Não foi possível continuar. Tente novamente.");
+    } finally {
       setLoading(false);
-      toast("Crie sua conta para iniciar o diagnóstico", {
-        description: "A verificação passiva roda no servidor e exige confirmação de autorização.",
-      });
-    }, 400);
+    }
   };
 
   return (
