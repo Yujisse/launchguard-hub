@@ -15,10 +15,10 @@ export const startScan = createServerFn({ method: "POST" })
       .select("id, public_url, authorization_confirmed")
       .eq("id", data.projectId)
       .maybeSingle();
-    if (projectError) throw new Error("Não foi possível carregar o projeto.");
-    if (!project) throw new Error("Projeto não encontrado.");
+    if (projectError) return { status: "error" as const, message: "Não foi possível carregar o projeto." };
+    if (!project) return { status: "error" as const, message: "Projeto não encontrado." };
     if (!project.authorization_confirmed) {
-      throw new Error("Confirme a autorização para analisar este projeto.");
+      return { status: "error" as const, message: "Confirme a autorização para analisar este projeto." };
     }
 
     // Limite simples de uso: no máximo 10 análises por hora por conta.
@@ -28,8 +28,17 @@ export const startScan = createServerFn({ method: "POST" })
       .select("id", { count: "exact", head: true })
       .eq("owner_id", userId)
       .gte("created_at", hourAgo);
+    const minuteAgo = new Date(Date.now() - 60_000).toISOString();
+    const { count: recent } = await supabase
+      .from("scans")
+      .select("id", { count: "exact", head: true })
+      .eq("owner_id", userId)
+      .gte("created_at", minuteAgo);
+    if ((recent ?? 0) >= 2) {
+      return { status: "error" as const, message: "Aguarde um minuto antes de iniciar outra análise." };
+    }
     if ((count ?? 0) >= 10) {
-      throw new Error("Limite de análises por hora atingido. Tente novamente mais tarde.");
+      return { status: "error" as const, message: "Limite de análises por hora atingido. Tente novamente mais tarde." };
     }
 
     const startedAt = new Date().toISOString();
@@ -46,10 +55,15 @@ export const startScan = createServerFn({ method: "POST" })
       })
       .select("id")
       .single();
-    if (scanError || !scan) throw new Error("Não foi possível iniciar a análise.");
+    if (scanError || !scan) return { status: "error" as const, message: "Não foi possível iniciar a análise." };
 
     const { runPassiveScan } = await import("./scan.server");
-    const outcome = await runPassiveScan(project.public_url);
+    let outcome: Awaited<ReturnType<typeof runPassiveScan>>;
+    try {
+      outcome = await runPassiveScan(project.public_url);
+    } catch {
+      outcome = { findings: [], score: 0, finalUrl: null, failure: "Ocorreu uma falha técnica durante a análise. Nada foi alterado no seu site." };
+    }
 
     if (outcome.failure) {
       await supabase
@@ -94,7 +108,7 @@ export const startScan = createServerFn({ method: "POST" })
             completed_at: new Date().toISOString(),
           })
           .eq("id", scan.id);
-        throw new Error("A análise rodou, mas não conseguimos salvar os resultados.");
+        return { status: "error" as const, message: "A análise rodou, mas não conseguimos salvar os resultados." };
       }
     }
 

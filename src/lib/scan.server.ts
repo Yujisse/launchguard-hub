@@ -16,8 +16,6 @@ export type RawFinding = {
 
 const TIMEOUT_MS = 12_000;
 const MAX_REDIRECTS = 5;
-const MAX_BYTES = 1_500_000;
-const MAX_LINK_CHECKS = 10;
 
 async function timedFetch(url: string, init: RequestInit): Promise<Response> {
   const controller = new AbortController();
@@ -32,25 +30,6 @@ async function timedFetch(url: string, init: RequestInit): Promise<Response> {
   } finally {
     clearTimeout(timer);
   }
-}
-
-async function readLimited(response: Response): Promise<string> {
-  const reader = response.body?.getReader();
-  if (!reader) return "";
-  const decoder = new TextDecoder();
-  let total = 0;
-  let out = "";
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    total += value.byteLength;
-    if (total > MAX_BYTES) {
-      await reader.cancel();
-      break;
-    }
-    out += decoder.decode(value, { stream: true });
-  }
-  return out;
 }
 
 function isPrivateIPv4(ip: string): boolean {
