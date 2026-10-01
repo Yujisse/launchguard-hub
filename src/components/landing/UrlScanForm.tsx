@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { z } from "zod";
-import { toast } from "sonner";
+import { useNavigate } from "@tanstack/react-router";
+
+import { supabase } from "@/integrations/supabase/client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,8 +30,49 @@ export function UrlScanForm() {
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    const parsed = urlSchema.safeParse(value);
+    if (!parsed.success) {
+      setError(parsed.error.issues[0]?.message ?? "Endereço inválido.");
+      return;
+    }
+    setError(null);
+    setLoading(true);
+    try {
+      sessionStorage.setItem("lancapp:pending-url", parsed.data);
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        await navigate({ to: "/app/analisar", search: { url: parsed.data } });
+      } else {
+        await navigate({ to: "/criar-conta" });
+      }
+    } catch {
+      setError("Não foi possível continuar. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+        (u.protocol === "http:" || u.protocol === "https:") &&
+        u.hostname.includes(".") &&
+        !/^(localhost|127\.|10\.|192\.168\.|169\.254\.)/i.test(u.hostname)
+      );
+    } catch {
+      return false;
+    }
+  }, "Use um endereço público válido, como https://seu-saas.com");
+
+export function UrlScanForm() {
+  const [value, setValue] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const parsed = urlSchema.safeParse(value);
     if (!parsed.success) {
