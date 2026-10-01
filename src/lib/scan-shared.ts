@@ -74,6 +74,8 @@ export function validatePublicUrl(raw: string): string | null {
     return "Endereço inválido.";
   }
   if (u.protocol !== "http:" && u.protocol !== "https:") return "Use apenas http ou https.";
+  if (u.username || u.password) return "Endereços com usuário ou senha não são aceitos.";
+  if (u.port && u.port !== "80" && u.port !== "443") return "Use apenas as portas padrão (80 ou 443).";
   const host = u.hostname.toLowerCase().replace(/^\[|\]$/g, "");
   if (!host.includes(".") && !host.includes(":")) return "Informe um domínio público válido.";
   if (
@@ -97,6 +99,8 @@ export function validatePublicUrl(raw: string): string | null {
       (a === 172 && b >= 16 && b <= 31) ||
       (a === 192 && b === 168) ||
       (a === 100 && b >= 64 && b <= 127) ||
+      (a === 192 && b === 0) ||
+      (a === 198 && (b === 18 || b === 19)) ||
       a >= 224
     ) {
       return "Endereços internos ou privados não podem ser analisados.";

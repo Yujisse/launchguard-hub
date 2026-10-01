@@ -53,6 +53,62 @@ async function readLimited(response: Response): Promise<string> {
   return out;
 }
 
+function isPrivateIPv4(ip: string): boolean {
+  const p = ip.split(".").map(Number);
+  if (p.length !== 4 || p.some((n) => Number.isNaN(n))) return true;
+  const [a, b] = p as [number, number, number, number];
+  return (
+    a === 0 || a === 10 || a === 127 || a >= 224 ||
+    (a === 169 && b === 254) ||
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168) ||
+    (a === 192 && b === 0) ||
+    (a === 100 && b >= 64 && b <= 127) ||
+    (a === 198 && (b === 18 || b === 19))
+  );
+}
+
+function isPrivateIPv6(ip: string): boolean {
+  const v = ip.toLowerCase();
+  if (v === "::" || v === "::1") return true;
+  if (v.startsWith("fc") || v.startsWith("fd") || v.startsWith("fe8") || v.startsWith("fe9") || v.startsWith("fea") || v.startsWith("feb") || v.startsWith("ff")) return true;
+  const mapped = v.match(/::ffff:(\d+\.\d+\.\d+\.\d+)$/);
+  if (mapped) return isPrivateIPv4(mapped[1]!);
+  if (v.startsWith("64:ff9b:") || v.startsWith("2001:db8")) return true;
+  return false;
+}
+
+/** Resolves the host via DNS-over-HTTPS and rejects any private/local/metadata address. */
+async function assertPublicDns(host: string): Promise<string | null> {
+  const ips: string[] = [];
+  try {
+    for (const type of ["A", "AAAA"] as const) {
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), 5_000);
+      try {
+        const res = await fetch(
+          `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(host)}&type=${type}`,
+          { headers: { accept: "application/dns-json" }, signal: controller.signal },
+        );
+        if (!res.ok) throw new Error("dns");
+        const json = (await res.json()) as { Answer?: { type: number; data: string }[] };
+        for (const ans of json.Answer ?? []) {
+          if (ans.type === 1 || ans.type === 28) ips.push(ans.data);
+        }
+      } finally {
+        clearTimeout(t);
+      }
+    }
+  } catch {
+    return "Não conseguimos validar o DNS deste endereço. Tente novamente em instantes.";
+  }
+  if (ips.length === 0) return "Este domínio não possui um endereço público (DNS não encontrado).";
+  if (ips.some((ip) => (ip.includes(":") ? isPrivateIPv6(ip) : isPrivateIPv4(ip)))) {
+    return "Este domínio aponta para um endereço interno ou privado e não pode ser analisado.";
+  }
+  return null;
+}
+
 export type ScanOutcome = {
   findings: RawFinding[];
   score: number;
@@ -110,6 +166,10 @@ export async function runPassiveScan(inputUrl: string): Promise<ScanOutcome> {
   try {
     for (let i = 0; i <= MAX_REDIRECTS; i++) {
       chain.push(current);
+      const dnsError = await assertPublicDns(new URL(current).hostname);
+      if (dnsError) {
+        return { findings: [], score: 0, finalUrl: current, failure: dnsError };
+      }
       const res = await timedFetch(current, { method: "GET" });
       if (res.status >= 300 && res.status < 400) {
         const location = res.headers.get("location");
@@ -328,119 +388,8 @@ export async function runPassiveScan(inputUrl: string): Promise<ScanOutcome> {
     }
   }
 
-  // 5. Conteúdo: viewport mobile e links internos quebrados
-  const contentType = h.get("content-type") ?? "";
-  if (contentType.includes("text/html") && response.status < 400) {
-    const html = await readLimited(response);
-
-    if (!/<meta[^>]+name=["']viewport["']/i.test(html)) {
-      findings.push({
-        check_code: "no_viewport",
-        category: "mobile_performance",
-        severity: "medio",
-        title: "Sem meta viewport",
-        summary: "A página inicial não declara a meta tag viewport.",
-        impact: "O site pode ficar desproporcional em celulares.",
-        remediation:
-          'Adicione <meta name="viewport" content="width=device-width, initial-scale=1" /> ao HTML.',
-        affected_resource: finalUrl,
-      });
-    }
-
-    if (finalIsHttps) {
-      const mixed = html.match(/(?:src|href)=["']http:\/\/[^"']+/gi) ?? [];
-      if (mixed.length) {
-        findings.push({
-          check_code: "mixed_content",
-          category: "security",
-          severity: "alto",
-          title: "Conteúdo misto (recursos em HTTP)",
-          summary: `Foram encontradas ${mixed.length} referência(s) a recursos sem HTTPS.`,
-          safe_evidence: mixed.slice(0, 3).join("\n"),
-          impact: "Navegadores podem bloquear esses recursos e a página pode quebrar.",
-          remediation: "Atualize essas referências para HTTPS.",
-          affected_resource: finalUrl,
-        });
-      }
-    }
-
-    // Links internos
-    const origin = new URL(finalUrl).origin;
-    const hrefs = [...html.matchAll(/href=["']([^"'#]+)["']/gi)]
-      .map((m) => m[1]!)
-      .filter((href) => !/^(mailto:|tel:|javascript:|data:)/i.test(href));
-    const internal = [
-      ...new Set(
-        hrefs
-          .map((href) => {
-            try {
-              return new URL(href, finalUrl).toString();
-            } catch {
-              return null;
-            }
-          })
-          .filter((u): u is string => !!u && u.startsWith(origin) && u !== finalUrl),
-      ),
-    ].slice(0, MAX_LINK_CHECKS);
-
-    const broken: string[] = [];
-    for (const link of internal) {
-      try {
-        const res = await timedFetch(link, { method: "GET" });
-        if (res.status >= 400) broken.push(`${res.status} — ${link}`);
-        await res.body?.cancel();
-      } catch {
-        broken.push(`sem resposta — ${link}`);
-      }
-    }
-
-    if (internal.length === 0) {
-      findings.push({
-        check_code: "links_none",
-        category: "flows",
-        severity: "info",
-        title: "Nenhum link interno encontrado para verificar",
-        summary: "A página inicial não expôs links internos analisáveis nesta versão.",
-      });
-    } else if (broken.length) {
-      findings.push({
-        check_code: "broken_links",
-        category: "flows",
-        severity: "alto",
-        title: `${broken.length} link(s) interno(s) com erro`,
-        summary: `Foram verificados ${internal.length} links internos da página inicial.`,
-        safe_evidence: broken.slice(0, 5).join("\n"),
-        impact: "Visitantes podem chegar a páginas quebradas.",
-        remediation: "Corrija ou remova esses links.",
-        affected_resource: finalUrl,
-      });
-    } else {
-      findings.push({
-        check_code: "links_ok",
-        category: "flows",
-        severity: "info",
-        title: `${internal.length} link(s) interno(s) verificados sem erro`,
-        summary: "Nenhum problema desta categoria foi encontrado nas verificações realizadas.",
-      });
-    }
-
-    // Páginas legais (apenas indício a partir dos links da home)
-    const legalHit = hrefs.some((href) => /(termos|terms|privacidade|privacy)/i.test(href));
-    if (!legalHit) {
-      findings.push({
-        check_code: "legal_links_missing",
-        category: "legal_observability",
-        severity: "medio",
-        title: "Não encontramos links para termos ou privacidade",
-        summary: "A página inicial não apresenta links visíveis para termos de uso ou política de privacidade.",
-        impact: "Além de afetar a confiança, isso pode gerar problemas de conformidade.",
-        remediation: "Publique e vincule as páginas de termos de uso e política de privacidade.",
-        affected_resource: finalUrl,
-      });
-    }
-  } else {
-    await response.body?.cancel();
-  }
+  // O corpo da página não é lido nem armazenado: só a resposta pública (status e cabeçalhos).
+  await response.body?.cancel().catch(() => {});
 
   findings.push(...UNVERIFIABLE);
 
