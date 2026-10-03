@@ -398,7 +398,7 @@ export function FaqSection() {
     },
     {
       q: "Preciso conectar o GitHub?",
-      a: "Não. A análise da URL pública funciona sozinha. A conexão com GitHub e Supabase ainda está em desenvolvimento; até lá, esses itens aparecem como "Não foi possível verificar".",
+      a: "Não. A análise da URL pública funciona sozinha. A conexão com GitHub e Supabase ainda está em desenvolvimento; até lá, esses itens aparecem como “Não foi possível verificar”.",
     },
     {
       q: "A análise garante que meu SaaS está seguro?",
