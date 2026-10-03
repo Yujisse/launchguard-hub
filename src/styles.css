@@ -32,6 +32,7 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-strong: var(--primary-strong);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -65,37 +66,38 @@
   --color-sidebar-ring: var(--ring);
 
   --shadow-elevated: 0 18px 40px -24px rgb(0 0 0 / 0.85);
-  --shadow-glow: 0 0 0 1px rgb(183 255 60 / 0.18), 0 12px 40px -18px rgb(183 255 60 / 0.35);
+  --shadow-glow: 0 0 0 1px rgb(244 63 94 / 0.25), 0 12px 40px -16px rgb(244 63 94 / 0.45);
 }
 
 :root {
   --radius: 0.875rem;
 
-  --background: #06080b;
+  --background: #07070a;
   --foreground: #f4f7fa;
-  --card: #0c1117;
+  --card: #111115;
   --card-foreground: #f4f7fa;
-  --elevated: #111821;
-  --popover: #0c1117;
+  --elevated: #19191e;
+  --popover: #111115;
   --popover-foreground: #f4f7fa;
-  --primary: #b7ff3c;
-  --primary-foreground: #06080b;
-  --secondary: #111821;
+  --primary: #f43f5e;
+  --primary-foreground: #ffffff;
+  --primary-strong: #e11d48;
+  --secondary: #19191e;
   --secondary-foreground: #f4f7fa;
-  --muted: #111821;
-  --muted-foreground: #8d99a8;
-  --accent: #111821;
+  --muted: #19191e;
+  --muted-foreground: #9a9aa6;
+  --accent: #19191e;
   --accent-foreground: #f4f7fa;
-  --teal: #45e6c0;
+  --teal: #fb7185;
   --info: #60a5fa;
   --warning: #f4c95d;
-  --critical: #ff5f75;
+  --critical: #ff6b81;
   --success: #42d98b;
-  --border: #202a35;
+  --border: #26262d;
   --border-subtle: rgba(255, 255, 255, 0.07);
-  --input: #202a35;
-  --ring: #b7ff3c;
-  --sidebar: #080b0f;
+  --input: #26262d;
+  --ring: #f43f5e;
+  --sidebar: #0b0b0e;
   --sidebar-foreground: #f4f7fa;
 }
 
@@ -107,7 +109,8 @@
   --elevated: #ffffff;
   --popover: #ffffff;
   --popover-foreground: #0b1016;
-  --primary: #4d7c0f;
+  --primary: #be123c;
+  --primary-strong: #be123c;
   --primary-foreground: #ffffff;
   --secondary: #eef2f6;
   --secondary-foreground: #0b1016;
@@ -115,7 +118,7 @@
   --muted-foreground: #55606e;
   --accent: #eef2f6;
   --accent-foreground: #0b1016;
-  --teal: #0d9488;
+  --teal: #e11d48;
   --info: #2563eb;
   --warning: #a16207;
   --critical: #d1213c;
@@ -123,7 +126,7 @@
   --border: #dbe2ea;
   --border-subtle: rgba(11, 16, 22, 0.08);
   --input: #dbe2ea;
-  --ring: #4d7c0f;
+  --ring: #be123c;
   --sidebar: #ffffff;
   --sidebar-foreground: #0b1016;
 }
@@ -240,4 +243,18 @@
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Staged hero entrance (CSS-only so SSR markup stays interactive) */
+@utility enter-stage {
+  animation: rise-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Subtle hover lift for landing cards */
+#conteudo .surface-card {
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+#conteudo .surface-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklab, var(--color-primary) 35%, var(--color-border));
 }
