@@ -53,7 +53,7 @@ function Page() {
 
   useEffect(() => {
     if (search.url) return;
-    const pending = sessionStorage.getItem(PENDING_URL_KEY);
+    const pending = localStorage.getItem(PENDING_URL_KEY);
     if (pending) setUrl(pending);
   }, [search.url]);
 
@@ -85,7 +85,7 @@ function Page() {
         },
       });
       setProjectId(id);
-      sessionStorage.removeItem(PENDING_URL_KEY);
+      localStorage.removeItem(PENDING_URL_KEY);
       await run(id);
     } catch (err) {
       setError(err instanceof Error && err.message ? err.message : "Não foi possível concluir a análise.");
@@ -177,7 +177,7 @@ function ReportView({ report, onRescan, loading }: { report: Report; onRescan: (
               <p className="mt-1 font-mono text-4xl font-semibold">{scan.overall_score}<span className="text-base text-muted-foreground">/100</span></p>
               <p className={`text-sm font-medium ${verdictClass(scan.verdict)}`}>{scan.verdict}</p>
               <p className="mt-1 max-w-md text-xs text-muted-foreground">
-                Score parcial: considera apenas as verificações públicas abaixo. Itens não verificados não entram na conta.
+                Score da URL pública: considera apenas as verificações executadas abaixo. Código, banco de dados e pagamentos não foram analisados e não entram na conta — este número não indica que eles estão aprovados.
               </p>
             </>
           )}
@@ -187,6 +187,9 @@ function ReportView({ report, onRescan, loading }: { report: Report; onRescan: (
         </Button>
       </div>
 
+      {verified.length ? (
+        <h3 className="text-sm font-semibold text-muted-foreground">Verificações executadas na URL pública</h3>
+      ) : null}
       {verified.length ? (
         <ul className="space-y-3">
           {verified.map((f) => (
@@ -213,7 +216,7 @@ function ReportView({ report, onRescan, loading }: { report: Report; onRescan: (
 
       {unverified.length ? (
         <div className="surface-card p-5">
-          <h3 className="font-semibold">Não verificado</h3>
+          <h3 className="font-semibold">Não foi possível verificar</h3>
           <p className="mt-1 text-sm text-muted-foreground">
             Não tivemos acesso suficiente para confirmar estas configurações. Nada foi aprovado nem reprovado.
           </p>
