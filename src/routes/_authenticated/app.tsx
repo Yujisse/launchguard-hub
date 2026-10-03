@@ -23,7 +23,7 @@ function Page() {
   const { user } = Route.useRouteContext();
   const navigate = useNavigate();
   useEffect(() => {
-    if (sessionStorage.getItem("lancapp:pending-url")) navigate({ to: "/app/analisar", search: {} });
+    if (localStorage.getItem("lancapp:pending-url")) navigate({ to: "/app/analisar", search: {} });
   }, [navigate]);
 
   const { data: profile, isLoading } = useQuery({

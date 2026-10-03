@@ -53,7 +53,7 @@ function Page() {
       email: parsed.data.email,
       password: parsed.data.password,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: `${window.location.origin}/entrar`,
         data: { full_name: parsed.data.fullName },
       },
     });
@@ -76,7 +76,7 @@ function Page() {
   const onGoogle = async () => {
     setLoading(true);
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: `${window.location.origin}/entrar`,
     });
     if (result.error) {
       setLoading(false);

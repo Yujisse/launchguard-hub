@@ -42,7 +42,7 @@ export function UrlScanForm() {
     setError(null);
     setLoading(true);
     try {
-      sessionStorage.setItem("lancapp:pending-url", parsed.data);
+      localStorage.setItem("lancapp:pending-url", parsed.data);
       const { data } = await supabase.auth.getSession();
       if (data.session) {
         await navigate({ to: "/app/analisar", search: { url: parsed.data } });
@@ -77,7 +77,7 @@ export function UrlScanForm() {
         </div>
         <Button type="submit" variant="hero" size="xl" disabled={loading}>
           {loading ? <Loader2 className="animate-spin" /> : <ArrowRight />}
-          Analisar gratuitamente
+          Analisar grátis (requer conta)
         </Button>
       </div>
       {error ? (
@@ -86,7 +86,7 @@ export function UrlScanForm() {
         </p>
       ) : null}
       <p className="mt-3 text-xs text-muted-foreground">
-        Verificação passiva • Não alteramos seu projeto • Resultado inicial em minutos
+        Conta gratuita necessária • Verificação passiva da URL pública • Não alteramos seu projeto
       </p>
     </form>
   );

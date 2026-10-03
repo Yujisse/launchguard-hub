@@ -53,7 +53,7 @@ function Page() {
 
   useEffect(() => {
     if (search.url) return;
-    const pending = sessionStorage.getItem(PENDING_URL_KEY);
+    const pending = localStorage.getItem(PENDING_URL_KEY);
     if (pending) setUrl(pending);
   }, [search.url]);
 
@@ -85,7 +85,7 @@ function Page() {
         },
       });
       setProjectId(id);
-      sessionStorage.removeItem(PENDING_URL_KEY);
+      localStorage.removeItem(PENDING_URL_KEY);
       await run(id);
     } catch (err) {
       setError(err instanceof Error && err.message ? err.message : "Não foi possível concluir a análise.");
