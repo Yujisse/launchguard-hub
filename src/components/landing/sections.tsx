@@ -286,12 +286,12 @@ export function PricingSection() {
       price: "R$0",
       note: "para começar",
       features: [
-        "1 projeto",
-        "1 análise básica por mês",
-        "Verificação da URL pública",
-        "Visualização limitada de achados",
+        "Análise passiva da URL pública",
+        "HTTPS, redirecionamentos e cabeçalhos",
+        "Relatório salvo na sua conta",
+        "Reanálise e histórico",
       ],
-      cta: "Começar grátis",
+      cta: "Criar conta grátis",
       highlight: false,
     },
     {
@@ -342,7 +342,7 @@ export function PricingSection() {
       <SectionTitle
         eyebrow="Preços"
         title="Pague pelo que você precisa antes de lançar"
-        description="Sem promessas de segurança garantida — só verificações claras e correções acionáveis."
+        description="Hoje está disponível a análise gratuita da URL pública. Os planos pagos estão em preparação e ainda não podem ser contratados."
       />
       <div className="mt-12 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {plans.map((p) => (
@@ -355,7 +355,7 @@ export function PricingSection() {
           >
             {p.highlight ? (
               <span className="absolute -top-3 left-6 rounded-full bg-primary px-3 py-1 text-[11px] font-medium text-primary-foreground">
-                Mais escolhido
+                Em breve
               </span>
             ) : null}
             <h3 className="text-sm font-semibold">{p.name}</h3>
@@ -369,9 +369,20 @@ export function PricingSection() {
                 </li>
               ))}
             </ul>
-            <Button asChild variant={p.highlight ? "hero" : "outline"} className="mt-6">
-              <a href="#analisar">{p.cta}</a>
-            </Button>
+            {p.price === "R$0" ? (
+              <Button asChild variant="hero" className="mt-6">
+                <a href="/criar-conta">{p.cta}</a>
+              </Button>
+            ) : (
+              <>
+                <Button variant="outline" className="mt-6" disabled>
+                  Em breve
+                </Button>
+                <p className="mt-2 text-center text-xs text-muted-foreground">
+                  Plano ainda não disponível para contratação.
+                </p>
+              </>
+            )}
           </div>
         ))}
       </div>
@@ -387,7 +398,7 @@ export function FaqSection() {
     },
     {
       q: "Preciso conectar o GitHub?",
-      a: "Não. A análise da URL pública funciona sozinha. Conectar o repositório autorizado apenas aprofunda o diagnóstico.",
+      a: "Não. A análise da URL pública funciona sozinha. A conexão com GitHub e Supabase ainda está em desenvolvimento; até lá, esses itens aparecem como "Não foi possível verificar".",
     },
     {
       q: "A análise garante que meu SaaS está seguro?",
@@ -399,15 +410,15 @@ export function FaqSection() {
     },
     {
       q: "O que acontece com o código analisado?",
-      a: "Guardamos apenas o necessário: caminhos, metadados e evidências com valores sensíveis mascarados. Conteúdo completo não fica armazenado.",
+      a: "Hoje não analisamos código. Da URL pública guardamos apenas status, cabeçalhos e o resumo dos achados — o conteúdo das páginas não é armazenado.",
     },
     {
       q: "Posso cancelar o plano quando quiser?",
-      a: "Sim. O cancelamento é feito pelo próprio painel e vale até o fim do período já pago.",
+      a: "Os planos pagos ainda não estão disponíveis. Quando forem lançados, o cancelamento será feito pelo próprio painel.",
     },
     {
       q: "A Lançapp corrige os problemas automaticamente?",
-      a: "Só com sua permissão explícita. A correção no GitHub cria um branch separado e abre um pull request para sua revisão — nunca envia direto para o branch de produção.",
+      a: "Ainda não. Hoje o relatório traz orientações de correção. A correção via GitHub está em desenvolvimento e, quando existir, só funcionará com sua permissão explícita, em um branch separado com pull request para revisão.",
     },
   ];
 
