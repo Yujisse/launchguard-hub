@@ -44,7 +44,7 @@ export function HeroScanCard() {
   }, []);
 
   return (
-    <div className="surface-card relative overflow-hidden p-5 shadow-[var(--shadow-elevated)]">
+    <div className="surface-card relative overflow-hidden p-5 shadow-[var(--shadow-glow)] border-primary/30">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px animate-scan-beam bg-gradient-to-r from-transparent via-primary to-transparent" />
 
       <div className="flex items-center justify-between gap-3">

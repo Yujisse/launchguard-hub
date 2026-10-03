@@ -81,7 +81,7 @@ export function ScanCursor() {
           ctx.beginPath();
           ctx.moveTo(p0.x, p0.y);
           ctx.lineTo(p1.x, p1.y);
-          ctx.strokeStyle = `rgba(183, 255, 60, ${(i / trail.length) * 0.22})`;
+          ctx.strokeStyle = `rgba(244, 63, 94, ${(i / trail.length) * 0.22})`;
           ctx.lineWidth = 1.2;
           ctx.stroke();
         }
