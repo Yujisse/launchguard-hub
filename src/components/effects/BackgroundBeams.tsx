@@ -34,10 +34,10 @@ export function BackgroundBeams({ className }: { className?: string }) {
         fill="none"
       >
         {paths.map((d, i) => (
-          <path key={`base-${i}`} d={d} className="stroke-primary" strokeOpacity="0.06" strokeWidth="1" />
+          <path key={`base-${i}`} d={d} className="stroke-primary" strokeOpacity="0.12" strokeWidth="1" />
         ))}
         {paths.map((d, i) => (
-          <path key={`beam-${i}`} d={d} stroke={`url(#beam-grad-${i})`} strokeWidth="1.4" strokeLinecap="round" />
+          <path key={`beam-${i}`} d={d} stroke={`url(#beam-grad-${i})`} strokeWidth="2" strokeLinecap="round" />
         ))}
         <defs>
           {paths.map((_, i) =>
